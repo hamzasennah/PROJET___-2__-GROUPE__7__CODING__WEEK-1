@@ -3,8 +3,9 @@ import pandas as pd
 import numpy as np
 import seaborn as sns
 import matplotlib.pyplot as plt
+import os
 # charger le fichier
-df = pd.read_excel(r"C:\Users\J.P.M\Downloads\ObesityDataSetr.xlsx")
+df = pd.read_csv(os.path.join(os.path.dirname(__file__), '..', 'data' , 'ObesityDataSet_raw_and_data_sinthetic.csv'))
 df
 # afficher les premières lignes
 print(df.head())
