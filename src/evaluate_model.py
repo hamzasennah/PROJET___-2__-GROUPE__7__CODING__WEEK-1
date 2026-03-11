@@ -1,4 +1,5 @@
 import pandas as pd
+import os 
 
 from sklearn.model_selection import train_test_split
 from sklearn.metrics import accuracy_score, precision_score, recall_score, f1_score, roc_auc_score
@@ -12,7 +13,8 @@ from lightgbm import LGBMClassifier
 # Load dataset
 # ===============================
 
-data_path = r"C:\Users\Zouhire\Documents\GitHub\PROJET___-2__-GROUPE__7__CODING__WEEK-1\data_clean.csv"
+
+data_path = os.path.join(os.path.dirname(__file__), '..', 'data_clean.csv')
 
 df = pd.read_csv(data_path)
 
