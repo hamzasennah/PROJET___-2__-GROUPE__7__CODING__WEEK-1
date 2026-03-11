@@ -14,7 +14,7 @@ from lightgbm import LGBMClassifier
 # 1 Load dataset
 # ===============================
 
-data_path = os.path.join(os.path.dirname(__file__), '..', 'data_clean.csv')
+data_path = os.path.join(os.path.dirname(__file__), '..', 'data' , 'data_clean.csv')
 
 df = pd.read_csv(data_path)
 
