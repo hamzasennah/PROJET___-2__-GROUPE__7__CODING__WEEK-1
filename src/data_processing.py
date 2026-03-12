@@ -43,3 +43,43 @@ df['MTRANS'] = df['MTRANS'].map({'Automobile':0, 'Bike':1, 'Motorbike':2, 'Publi
 df  
 df.to_csv("data_clean.csv", index=False)
 df.info()
+correlation_matrix = df.corr()
+plt.figure(figsize=(12, 10))
+sns.heatmap(correlation_matrix, annot=True, cmap='coolwarm', fmt=".2f")
+plt.title('Correlation Matrix')
+plt.tight_layout()
+plt.show()
+numeric_cols = df.select_dtypes(include=['int64','float64']).columns
+
+plt.figure(figsize=(11,8))
+
+for i, col in enumerate(numeric_cols):
+    plt.subplot(4,4,i+1)
+    sns.boxplot(y=df[col])
+    plt.title(col)
+
+plt.tight_layout()
+plt.show()
+
+plt.show()
+plt.figure(figsize=(8,5))
+sns.countplot(x=df["NObeyesdad"])
+
+labels = [
+    "Insufficient Weight",
+    "Normal Weight",
+    "Overweight I",
+    "Overweight II",
+    "Obesity I",
+    "Obesity II",
+    "Obesity III"
+]
+
+plt.xticks(ticks=range(len(labels)), labels=labels, rotation=30)
+
+plt.title("Distribution of Obesity Classes")
+plt.xlabel("Obesity Level")
+plt.ylabel("Count")
+plt.subplots_adjust(bottom=0.25)
+
+plt.show()
