@@ -3,9 +3,8 @@ import pandas as pd
 import numpy as np
 import seaborn as sns
 import matplotlib.pyplot as plt
-import os
 # charger le fichier
-df = pd.read_csv(os.path.join(os.path.dirname(__file__), '..', 'data' , 'ObesityDataSet_raw_and_data_sinthetic.csv'))
+df = pd.read_excel(r"C:\Users\J.P.M\Downloads\ObesityDataSetr.xlsx")
 df
 # afficher les premières lignes
 print(df.head())
@@ -44,3 +43,9 @@ df['MTRANS'] = df['MTRANS'].map({'Automobile':0, 'Bike':1, 'Motorbike':2, 'Publi
 df  
 df.to_csv("data_clean.csv", index=False)
 df.info()
+correlation_matrix = df.corr()
+plt.figure(figsize=(12, 10))
+sns.heatmap(correlation_matrix, annot=True, cmap='coolwarm', fmt=".2f")
+plt.title('Correlation Matrix')
+plt.tight_layout()
+plt.show()
