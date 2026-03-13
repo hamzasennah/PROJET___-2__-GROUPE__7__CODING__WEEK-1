@@ -45,7 +45,6 @@ df['MTRANS'] = df['MTRANS'].map({'Automobile':0, 'Bike':1, 'Motorbike':2, 'Publi
 df  
 df.to_csv("data_clean.csv", index=False)
 df.info()
-
 correlation_matrix = df.corr()
 plt.figure(figsize=(12, 10))
 sns.heatmap(correlation_matrix, annot=True, cmap='coolwarm', fmt=".2f")
@@ -87,24 +86,23 @@ plt.subplots_adjust(bottom=0.25)
 
 plt.show()
 def optimize_memory(df):
-    """
-    Reduce memory usage of a pandas dataframe by optimizing data types.
-    """
-    
-    start_mem = df.memory_usage().sum() / 1024**2
-    print(f"Memory usage before optimization: {start_mem:.2f} MB")
+
+    start_mem = df.memory_usage(deep=True).sum() / 1024**2
+    print(f"Memory usage BEFORE optimization: {start_mem:.2f} MB")
 
     for col in df.columns:
         col_type = df[col].dtype
 
-        # Skip object and category columns
-        if col_type != object and str(col_type) != "category":
+        if col_type == object:
+            df[col] = df[col].astype("category")
+
+        elif col_type != "category":
 
             c_min = df[col].min()
             c_max = df[col].max()
 
-            # Optimize integers
             if str(col_type)[:3] == "int":
+
                 if c_min >= np.iinfo(np.int8).min and c_max <= np.iinfo(np.int8).max:
                     df[col] = df[col].astype(np.int8)
 
@@ -114,23 +112,22 @@ def optimize_memory(df):
                 elif c_min >= np.iinfo(np.int32).min and c_max <= np.iinfo(np.int32).max:
                     df[col] = df[col].astype(np.int32)
 
-                else:
-                    df[col] = df[col].astype(np.int64)
-
-            # Optimize floats
             else:
-                if c_min >= np.finfo(np.float16).min and c_max <= np.finfo(np.float16).max:
-                    df[col] = df[col].astype(np.float16)
 
-                elif c_min >= np.finfo(np.float32).min and c_max <= np.finfo(np.float32).max:
+                if c_min >= np.finfo(np.float32).min and c_max <= np.finfo(np.float32).max:
                     df[col] = df[col].astype(np.float32)
 
-                else:
-                    df[col] = df[col].astype(np.float64)
+    end_mem = df.memory_usage(deep=True).sum() / 1024**2
 
-    end_mem = df.memory_usage().sum() / 1024**2
-
-    print(f"Memory usage after optimization: {end_mem:.2f} MB")
-    print(f"Reduced by {(100 * (start_mem - end_mem) / start_mem):.1f}%")
+    print(f"Memory usage AFTER optimization: {end_mem:.2f} MB")
+    print(f"Memory reduced by {(100 * (start_mem - end_mem) / start_mem):.1f}%")
 
     return df
+print("Before optimization:")
+
+df = optimize_memory(df)
+
+print("\nAfter optimization:")
+df.info(memory_usage="deep")
+print("\nAfter optimization:")
+df.info(memory_usage="deep")
