@@ -126,7 +126,7 @@ def optimize_memory(df):
 print("Before optimization:")
 
 df = optimize_memory(df)
-
+df.info()
 print("\nAfter optimization:")
 df.info(memory_usage="deep")
 print("\nAfter optimization:")
