@@ -3,8 +3,10 @@ import pandas as pd
 import numpy as np
 import seaborn as sns
 import matplotlib.pyplot as plt
+import os
 # charger le fichier
-df = pd.read_excel(r"C:\Users\J.P.M\Downloads\ObesityDataSetr.xlsx")
+
+df = pd.read_csv(os.path.join(os.path.dirname(__file__), '..', 'data' , 'ObesityDataSet_raw_and_data_sinthetic.csv'))
 df
 # afficher les premières lignes
 print(df.head())
@@ -49,3 +51,83 @@ sns.heatmap(correlation_matrix, annot=True, cmap='coolwarm', fmt=".2f")
 plt.title('Correlation Matrix')
 plt.tight_layout()
 plt.show()
+numeric_cols = df.select_dtypes(include=['int64','float64']).columns
+
+plt.figure(figsize=(11,8))
+
+for i, col in enumerate(numeric_cols):
+    plt.subplot(4,4,i+1)
+    sns.boxplot(y=df[col])
+    plt.title(col)
+
+plt.tight_layout()
+plt.show()
+
+plt.show()
+plt.figure(figsize=(8,5))
+sns.countplot(x=df["NObeyesdad"])
+
+labels = [
+    "Insufficient Weight",
+    "Normal Weight",
+    "Overweight I",
+    "Overweight II",
+    "Obesity I",
+    "Obesity II",
+    "Obesity III"
+]
+
+plt.xticks(ticks=range(len(labels)), labels=labels, rotation=30)
+
+plt.title("Distribution of Obesity Classes")
+plt.xlabel("Obesity Level")
+plt.ylabel("Count")
+plt.subplots_adjust(bottom=0.25)
+
+plt.show()
+def optimize_memory(df):
+
+    start_mem = df.memory_usage(deep=True).sum() / 1024**2
+    print(f"Memory usage BEFORE optimization: {start_mem:.2f} MB")
+
+    for col in df.columns:
+        col_type = df[col].dtype
+
+        if col_type == object:
+            df[col] = df[col].astype("category")
+
+        elif col_type != "category":
+
+            c_min = df[col].min()
+            c_max = df[col].max()
+
+            if str(col_type)[:3] == "int":
+
+                if c_min >= np.iinfo(np.int8).min and c_max <= np.iinfo(np.int8).max:
+                    df[col] = df[col].astype(np.int8)
+
+                elif c_min >= np.iinfo(np.int16).min and c_max <= np.iinfo(np.int16).max:
+                    df[col] = df[col].astype(np.int16)
+
+                elif c_min >= np.iinfo(np.int32).min and c_max <= np.iinfo(np.int32).max:
+                    df[col] = df[col].astype(np.int32)
+
+            else:
+
+                if c_min >= np.finfo(np.float32).min and c_max <= np.finfo(np.float32).max:
+                    df[col] = df[col].astype(np.float32)
+
+    end_mem = df.memory_usage(deep=True).sum() / 1024**2
+
+    print(f"Memory usage AFTER optimization: {end_mem:.2f} MB")
+    print(f"Memory reduced by {(100 * (start_mem - end_mem) / start_mem):.1f}%")
+
+    return df
+print("Before optimization:")
+
+df = optimize_memory(df)
+
+print("\nAfter optimization:")
+df.info(memory_usage="deep")
+print("\nAfter optimization:")
+df.info(memory_usage="deep")
